@@ -3,9 +3,9 @@ import wave
 import sys
 
 seq = ""
-with open(sys.argv[1], 'r') as readFile:
+with open(sys.argv[1], "r") as readFile:
     for line in readFile:
-        if(not line[0] == '>'):
+        if not line[0] == ">":
             seq += line.rstrip("\n")
 
 length = len(seq)
@@ -17,25 +17,25 @@ out.setsampwidth(2)
 
 
 def nc2level(nucleotide, byte_value):
-    convert = {'A':-10, 'C': -5, 'G': 5, 'T': 10}
-    incremnt = 0
+    convert = {"A": -10, "C": -5, "G": 5, "T": 10}
+    increment = 0
     if nucleotide in convert:
         increment = convert[nucleotide]
 
-    value = (int.from_bytes(byte_value, byteorder='big') + increment) %256
-    return(value.to_bytes(1, byteorder='big'))
+    value = (int.from_bytes(byte_value, byteorder="big") + increment) % 256
+    return value.to_bytes(1, byteorder="big")
 
 
-time = 10
-maxFrame = time * 44100
-level = (127).to_bytes(1, byteorder='big')
+# time = 10
+maxFrame = length  # time * 44100
+level = (127).to_bytes(1, byteorder="big")
 frames = 0
 for nc in seq:
-    waveData = nc2level(nc,level)
-#    print(int.from_bytes(waveData, byteorder = 'big'))
+    waveData = nc2level(nc, level)
+    #    print(int.from_bytes(waveData, byteorder = 'big'))
     out.writeframes(waveData)
     out.writeframes(waveData)
     frames += 1
-    if(frames >= maxFrame):
-    	break
+    if frames >= maxFrame:
+        break
 out.close()
